@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weight → Pressure → Electricity Simulator</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background:#f4f4f4; }
+    .cube {
+      width: 150px; height: 150px;
+      margin: 20px auto;
+      background: sienna;
+      border: 5px solid #333;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .output {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+    input[type=range] { width: 300px; }
+  </style>
+</head>
+<body>
+  <h1>Chair Pressure → Electricity Game</h1>
+  
+  <label>Set Weight on Chair (kg):</label><br>
+  <input type="range" id="weightSlider" min="0" max="150" value="0">
+  <div id="weightValue">Weight: 0 kg</div>
+  
+  <div class="cube" id="cube"></div>
+  
+  <div class="output">
+    <div id="pressureValue">Pressure: 0 Pa</div>
+    <div id="electricityValue">Electricity: 0 V</div>
+  </div>
+  
+  <script>
+    const slider = document.getElementById('weightSlider');
+    const weightDisplay = document.getElementById('weightValue');
+    const pressureDisplay = document.getElementById('pressureValue');
+    const electricityDisplay = document.getElementById('electricityValue');
+    const cube = document.getElementById('cube');
+    
+    // Constants for simulation
+    const g = 9.81; // gravity m/s^2
+    const area = 0.05; // m^2 (cube face area)
+    const conversionFactor = 0.0001; // pressure → voltage
+    
+    slider.addEventListener('input', () => {
+      let weight = parseInt(slider.value);
+      weightDisplay.textContent = `Weight: ${weight} kg`;
+      
+      // Force = m*g
+      let force = weight * g;
+      // Pressure = Force / Area
+      let pressure = force / area;
+      // Electricity output (simple proportional model)
+      let voltage = pressure * conversionFactor;
+      
+      pressureDisplay.textContent = `Pressure: ${pressure.toFixed(2)} Pa`;
+      electricityDisplay.textContent = `Electricity: ${voltage.toFixed(2)} V`;
+      
+      // Visual feedback: cube scales with pressure
+      let scale = 1 + voltage/10;
+      cube.style.transform = `scale(${scale})`;
+      cube.style.background = `rgb(${Math.min(255, voltage*20)},80,50)`;
+    });
+  </script>
+</body>
+</html>
